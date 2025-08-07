@@ -1,0 +1,1732 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jadesola Olumuyiwa - Alpha Storm</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --electric-blue: #00ffff;
+            --alpha-pink: #ff0080;
+            --bio-green: #00ff88;
+            --matte-black: #0a0a0a;
+            --dark-gray: #1a1a1a;
+            --light-gray: #333;
+            --white: #ffffff;
+            --matrix-green: #00ff00;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--matte-black);
+            color: var(--white);
+            overflow-x: hidden;
+            line-height: 1.6;
+            cursor: none; /* Hide default cursor */
+        }
+
+        /* Custom Cursor */
+        .custom-cursor {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            mix-blend-mode: screen;
+            background: radial-gradient(circle, var(--electric-blue) 20%, transparent 70%);
+            box-shadow: 0 0 10px var(--electric-blue), 0 0 20px var(--alpha-pink);
+            transition: background 0.3s, box-shadow 0.3s;
+        }
+
+        .custom-cursor:hover {
+            background: radial-gradient(circle, var(--alpha-pink) 20%, transparent 70%);
+            box-shadow: 0 0 15px var(--alpha-pink), 0 0 25px var(--bio-green);
+        }
+
+        /* Particle Trail Canvas */
+        #particle-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9998;
+        }
+
+        /* Lock Screen Animation */
+        .lock-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--matte-black);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            opacity: 1;
+            transition: opacity 1s ease;
+        }
+
+        .lock-screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .lock-screen h1 {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
+            color: var(--electric-blue);
+            text-shadow: 0 0 10px var(--electric-blue);
+            animation: decryptText 2s steps(20, end);
+        }
+
+        .lock-screen p {
+            font-size: clamp(1rem, 2vw, 1.5rem);
+            color: var(--alpha-pink);
+            margin-top: 1rem;
+            opacity: 0;
+            animation: accessGranted 1s ease 2s forwards;
+        }
+
+        @keyframes decryptText {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+
+        @keyframes accessGranted {
+            to { opacity: 1; }
+        }
+
+        /* Lightning and Rain Background */
+        .lightning-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.1;
+        }
+
+        .lightning-bolt {
+            position: absolute;
+            width: 2px;
+            background: linear-gradient(to bottom, var(--electric-blue), transparent);
+            animation: lightning 3s infinite;
+        }
+
+        @keyframes lightning {
+            0%, 90%, 100% { opacity: 0; }
+            5%, 85% { opacity: 1; }
+        }
+
+        /* Rain SVG Animation */
+        .rain-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+        }
+
+        .rain-container.active {
+            opacity: 0.3;
+        }
+
+        .rain-container.fast {
+            opacity: 0.5;
+        }
+
+        .rain-drop {
+            stroke: var(--electric-blue);
+            stroke-width: 1;
+            fill: none;
+            animation: rainFall linear infinite;
+        }
+
+        @keyframes rainFall {
+            0% { transform: translateY(-100vh); }
+            100% { transform: translateY(100vh); }
+        }
+
+        /* Thunder SVG Animation */
+        .thunder-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .thunder-container.active {
+            opacity: 0.5;
+        }
+
+        .thunder-container.fast {
+            opacity: 0.8;
+        }
+
+        .thunder-bolt {
+            stroke: var(--alpha-pink);
+            stroke-width: 3;
+            fill: none;
+            animation: thunderFlash 0.3s ease-in-out;
+            opacity: 0;
+        }
+
+        @keyframes thunderFlash {
+            0%, 100% { opacity: 0; }
+            50% { opacity: 1; }
+        }
+
+        /* Hacker Mode Matrix Effect */
+        .matrix-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--matte-black);
+            z-index: 1000;
+            pointer-events: none;
+            opacity: 0;
+            display: none;
+        }
+
+        .matrix-overlay.active {
+            display: block;
+            opacity: 0.9;
+            animation: matrixFade 5s forwards;
+        }
+
+        .matrix-char {
+            position: absolute;
+            color: var(--matrix-green);
+            font-size: 14px;
+            opacity: 0.7;
+            animation: matrixDrop 2s linear infinite;
+        }
+
+        @keyframes matrixFade {
+            0% { opacity: 0.9; }
+            80% { opacity: 0.9; }
+            100% { opacity: 0; }
+        }
+
+        @keyframes matrixDrop {
+            0% { transform: translateY(-100vh); opacity: 0.7; }
+            100% { transform: translateY(100vh); opacity: 0.2; }
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            text-align: center;
+        }
+
+        .storm-sigil {
+            width: 120px;
+            height: 120px;
+            margin-bottom: 2rem;
+            position: relative;
+            animation: glitch 2s infinite;
+        }
+
+        .storm-sigil::before,
+        .storm-sigil::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100px;
+            height: 100px;
+            border: 3px solid var(--electric-blue);
+            border-radius: 50%;
+        }
+
+        .storm-sigil::before {
+            animation: pulse 2s infinite;
+        }
+
+        .storm-sigil::after {
+            width: 80px;
+            height: 80px;
+            border-color: var(--alpha-pink);
+            animation: pulse 2s infinite 0.5s;
+        }
+
+        @keyframes glitch {
+            0%, 90%, 100% { transform: translate(0); }
+            10% { transform: translate(-2px, -2px); }
+            20% { transform: translate(2px, 2px); }
+            30% { transform: translate(-2px, 2px); }
+            40% { transform: translate(2px, -2px); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+            50% { transform: translate(-50%, -50%) scale(1.1); opacity: 0.7; }
+        }
+
+        .hero.hacker-mode {
+            animation: glitchText 0.1s infinite;
+        }
+
+        .hero.hacker-mode h1,
+        .hero.hacker-mode .typewriter,
+        .hero.hacker-mode p {
+            color: var(--matrix-green);
+            text-shadow: 0 0 10px var(--matrix-green);
+        }
+
+        @keyframes glitchText {
+            0% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(2px, -2px); }
+            60% { transform: translate(-1px, 1px); }
+            80% { transform: translate(1px, -1px); }
+            100% { transform: translate(0); }
+        }
+
+        .hero h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(2rem, 5vw, 4rem);
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, var(--electric-blue), var(--alpha-pink), var(--bio-green));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .typewriter {
+            font-size: clamp(1rem, 2.5vw, 1.5rem);
+            margin-bottom: 2rem;
+            border-right: 2px solid var(--electric-blue);
+            white-space: nowrap;
+            overflow: hidden;
+            animation: typing 3s steps(40, end), blink-caret 0.75s step-end infinite;
+        }
+
+        @keyframes typing {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+
+        @keyframes blink-caret {
+            from, to { border-color: transparent; }
+            50% { border-color: var(--electric-blue); }
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            z-index: 1000;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 2rem;
+        }
+
+        nav a {
+            color: var(--white);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border: 1px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        nav a:hover {
+            border-color: var(--electric-blue);
+            box-shadow: 0 0 20px var(--electric-blue);
+            background: rgba(0, 255, 255, 0.1);
+        }
+
+        nav.hacker-mode a {
+            color: var(--matrix-green);
+            text-shadow: 0 0 5px var(--matrix-green);
+        }
+
+        /* Section Styling */
+        section {
+            padding: 5rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(2rem, 4vw, 3rem);
+            margin-bottom: 3rem;
+            text-align: center;
+            background: linear-gradient(45deg, var(--alpha-pink), var(--bio-green));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Storm Code Cards */
+        .storm-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .storm-card {
+            background: linear-gradient(135deg, var(--dark-gray), var(--light-gray));
+            border: 1px solid var(--electric-blue);
+            border-radius: 10px;
+            padding: 2rem;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: translateY(50px);
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        .storm-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 255, 255, 0.3);
+            border-color: var(--alpha-pink);
+        }
+
+        .storm-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, var(--electric-blue), var(--alpha-pink));
+            border-radius: 10px;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .storm-card:hover::before {
+            opacity: 0.1;
+        }
+
+        .storm-card.hacker-mode {
+            border-color: var(--matrix-green);
+            box-shadow: 0 0 20px var(--matrix-green);
+            animation: glitchCard 0.2s infinite;
+        }
+
+        .storm-card.hacker-mode h3,
+        .storm-card.hacker-mode p,
+        .storm-card.hacker-mode .quote {
+            color: var(--matrix-green);
+            text-shadow: 0 0 5px var(--matrix-green);
+        }
+
+        @keyframes glitchCard {
+            0% { transform: translate(0); }
+            20% { transform: translate(-3px, 3px); }
+            40% { transform: translate(3px, -3px); }
+            60% { transform: translate(-2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+            100% { transform: translate(0); }
+        }
+
+        .storm-card h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            color: var(--electric-blue);
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .storm-card .quote {
+            color: var(--alpha-pink);
+            font-style: italic;
+            margin-top: 1rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .storm-card:hover .quote {
+            opacity: 1;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Project Cards */
+        .project-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .project-card {
+            background: var(--dark-gray);
+            border: 1px solid var(--bio-green);
+            border-radius: 15px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .project-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(0, 255, 136, 0.1), transparent);
+            transition: transform 0.6s ease;
+            transform: rotate(45deg) translateY(100%);
+        }
+
+        .project-card:hover::before {
+            transform: rotate(45deg) translateY(-100%);
+        }
+
+        .project-card:hover {
+            transform: scale(1.02);
+            box-shadow: 0 15px 30px rgba(0, 255, 136, 0.2);
+        }
+
+        .project-card.hacker-mode {
+            border-color: var(--matrix-green);
+            box-shadow: 0 0 20px var(--matrix-green);
+            animation: glitchCard 0.2s infinite;
+        }
+
+        .project-card.hacker-mode h3,
+        .project-card.hacker-mode p,
+        .project-card.hacker-mode .tag {
+            color: var(--matrix-green);
+            text-shadow: 0 0 5px var(--matrix-green);
+        }
+
+        .project-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .project-card h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            color: var(--bio-green);
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .project-card p {
+            color: var(--white);
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .tag {
+            background: var(--light-gray);
+            color: var(--electric-blue);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            border: 1px solid var(--electric-blue);
+        }
+
+        .project-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.7rem 1.5rem;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 500;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background: var(--alpha-pink);
+            color: var(--white);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--electric-blue);
+            border: 1px solid var(--electric-blue);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 0, 128, 0.3);
+        }
+
+        .btn-secondary:hover {
+            background: var(--electric-blue);
+            color: var(--matte-black);
+        }
+
+        /* Signals Section */
+        .signals-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .signal-card {
+            background: var(--dark-gray);
+            border: 1px solid var(--alpha-pink);
+            border-radius: 10px;
+            padding: 2rem;
+            position: relative;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .signal-card:nth-child(2) {
+            animation-delay: -2s;
+        }
+
+        .signal-card:nth-child(3) {
+            animation-delay: -4s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .signal-card.hacker-mode {
+            border-color: var(--matrix-green);
+            box-shadow: 0 0 20px var(--matrix-green);
+            animation: glitchCard 0.2s infinite;
+        }
+
+        .signal-card.hacker-mode .quote-large,
+        .signal-card.hacker-mode p {
+            color: var(--matrix-green);
+            text-shadow: 0 0 5px var(--matrix-green);
+        }
+
+        .quote-large {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.5rem;
+            color: var(--alpha-pink);
+            text-align: center;
+            font-style: italic;
+            margin-bottom: 1rem;
+        }
+
+        /* Contact Section */
+        .contact {
+            text-align: center;
+            background: linear-gradient(135deg, var(--dark-gray), var(--matte-black));
+            border-radius: 20px;
+            padding: 3rem;
+            margin: 3rem 0;
+        }
+
+        .contact h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            color: var(--electric-blue);
+        }
+
+        .contact-btn {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background: linear-gradient(45deg, var(--electric-blue), var(--alpha-pink));
+            color: var(--white);
+            text-decoration: none;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            margin: 0.5rem;
+        }
+
+        .contact-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 25px rgba(0, 255, 255, 0.4);
+        }
+
+        .contact.hacker-mode .contact-btn {
+            background: var(--matrix-green);
+            color: var(--matte-black);
+            text-shadow: 0 0 5px var(--matrix-green);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            nav {
+                position: static;
+                text-align: center;
+                margin-bottom: 2rem;
+            }
+
+            nav ul {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .storm-grid,
+            .project-grid,
+            .signals-grid {
+                grid-template-columns: 1fr;
+            }
+
+            section {
+                padding: 3rem 1rem;
+            }
+
+            .typewriter {
+                white-space: normal;
+                border-right: none;
+                animation: none;
+            }
+
+            .rain-container,
+            .thunder-container {
+                opacity: 0.2; /* Reduce intensity on mobile */
+            }
+
+            .custom-cursor {
+                display: none; /* Disable custom cursor on mobile */
+            }
+
+            #particle-canvas {
+                display: none; /* Disable particle trail on mobile */
+            }
+        }
+
+        /* Scroll animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <!-- Lock Screen Animation -->
+    <div class="lock-screen" id="lock-screen">
+        <h1>Decrypting Alpha Jadesola...</h1>
+        <p>Access Granted.</p>
+    </div>
+
+    <!-- Lightning Background -->
+    <div class="lightning-bg" id="lightning-bg"></div>
+    <!-- Rain SVG Container -->
+    <div class="rain-container" id="rain-container">
+        <svg width="100%" height="100%"></svg>
+    </div>
+    <!-- Thunder SVG Container -->
+    <div class="thunder-container" id="thunder-container">
+        <svg width="100%" height="100%"></svg>
+    </div>
+    <!-- Matrix Overlay for Hacker Mode -->
+    <div class="matrix-overlay" id="matrix-overlay"></div>
+    <!-- Custom Cursor -->
+    <div class="custom-cursor" id="custom-cursor"></div>
+    <!-- Particle Trail Canvas -->
+    <canvas id="particle-canvas"></canvas>
+
+    <!-- Navigation -->
+    <nav>
+        <ul>
+            <li><a href="#hero">Storm</a></li>
+            <li><a href="#code">Code</a></li>
+            <li><a href="#creations">Creations</a></li>
+            <li><a href="#signals">Signals</a></li>
+            <li><a href="#contact">Join</a></li>
+        </ul>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="hero" class="hero">
+        <div class="storm-sigil"></div>
+        <h1>Jadesola Olumuyiwa</h1>
+        <div class="typewriter" id="typewriter">Storm formed. I was born to break systems.</div>
+        <p>Biotech Innovator • VIRA Founder • Future Trillionaire</p>
+    </section>
+
+    <!-- The Storm Code -->
+    <section id="code" class="fade-in">
+        <h2>The Storm Code</h2>
+        <div class="storm-grid">
+            <div class="storm-card">
+                <h3>Never Follow</h3>
+                <p>The path to greatness is carved by those who refuse to walk in others' footsteps.</p>
+                <div class="quote">"I don't follow trends. I create them."</div>
+            </div>
+            <div class="storm-card">
+                <h3>Never Settle</h3>
+                <p>Excellence is the minimum standard. Greatness is the starting point.</p>
+                <div class="quote">"Good enough is the enemy of extraordinary."</div>
+            </div>
+            <div class="storm-card">
+                <h3>Never Quit</h3>
+                <p>Persistence turns impossibility into inevitability.</p>
+                <div class="quote">"I don't have backup plans. I have Plan A until it works."</div>
+            </div>
+            <div class="storm-card">
+                <h3>Never Conform</h3>
+                <p>Systems are made to be broken by those brave enough to rebuild them.</p>
+                <div class="quote">"I am not here to fit in. I'm here to stand out."</div>
+            </div>
+            <div class="storm-card">
+                <h3>Never Doubt</h3>
+                <p>Self-belief is the foundation upon which empires are built.</p>
+                <div class="quote">"Doubt kills more dreams than failure ever will."</div>
+            </div>
+            <div class="storm-card">
+                <h3>Never Wait</h3>
+                <p>The future belongs to those who create it today.</p>
+                <div class="quote">"I don't wait for opportunities. I create them."</div>
+            </div>
+            <div class="storm-card">
+                <h3>Never Fear</h3>
+                <p>Fear is the only barrier between you and greatness.</p>
+                <div class="quote">"Fear is data, not a dictator."</div>
+            </div>
+            <div class="storm-card">
+                <h3>Never Stop</h3>
+                <p>Evolution requires constant motion and relentless growth.</p>
+                <div class="quote">"I'm not running from something. I'm running to everything."</div>
+            </div>
+            <div class="storm-card">
+                <h3>Never Apologize</h3>
+                <p>For being brilliant, ambitious, or unstoppable.</p>
+                <div class="quote">"I don't apologize for my fire. I burn brighter."</div>
+            </div>
+            <div class="storm-card">
+                <h3>Never Forget</h3>
+                <p>You were born to shatter ceilings and build new skies.</p>
+                <div class="quote">"I am not the next anyone. I'm the first me."</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Creations Vault -->
+    <section id="creations" class="fade-in">
+        <h2>Creations Vault</h2>
+        <div class="project-grid">
+            <div class="project-card">
+                <div class="project-header">
+                    <div>
+                        <h3>VIRA -  Visionary Innovators Revolutionizing Advancement</h3>
+                        <p>VIRA is where bold girls turn innovation into rebellion. Fueled by Vitality, Resilience, and Authority, we shatter systems and ignite unstoppable impact. The future’s ours — no followers allowed.</p>
+                    </div>
+                </div>
+                <div class="tags">
+                    <span class="tag">Nodes</span>
+                    <span class="tag">AI/ML</span>
+                    <span class="tag">React</span>
+                    <span class="tag">Tailwind</span>
+                </div>
+                <div class="project-links">
+                    <a href="https://vira-delta.vercel.app/" class="btn btn-primary">🔗 View Live</a>
+                    <a href="https://github.com/vivian-30/Vira" class="btn btn-secondary">📁 View Code</a>
+                </div>
+            </div>
+
+            <div class="project-card">
+                <div class="project-header">
+                    <div>
+                        <h3>SpringBot</h3>
+                        <p>AI tool for emotional and physical support during spring</p>
+                    </div>
+                </div>
+                <div class="tags">
+                    <span class="tag">Social Impact</span>
+                    <span class="tag">AI/ML</span>
+                    <span class="tag">Beginner Friendly</span>
+                    <span class="tag">Python</span>
+                </div>
+                <div class="project-links">
+                    <a href="https://springmind-8xnehefx6kkerccg5ybq2j.streamlit.app/" class="btn btn-primary">🔗 View Live</a>
+                    <a href="https://github.com/vivian-30/springmind" class="btn btn-secondary">📁 View Code</a>
+                </div>
+            </div>
+
+            <div class="project-card">
+                <div class="project-header">
+                    <div>
+                        <h3>BioChain Protocol</h3>
+                        <p>Blockchain solution for secure biotech research data sharing</p>
+                    </div>
+                </div>
+                <div class="tags">
+                    <span class="tag">Blockchain</span>
+                    <span class="tag">Web3</span>
+                    <span class="tag">Solidity</span>
+                    <span class="tag">DeFi</span>
+                </div>
+                <div class="project-links">
+                    <a href="#" class="btn btn-primary">🔗 View Live</a>
+                    <a href="#" class="btn btn-secondary">📁 View Code</a>
+                </div>
+            </div>
+
+            <div class="project-card">
+                <div class="project-header">
+                    <div>
+                        <h3>StormUI Design System</h3>
+                        <p>Lightning-fast, accessible component library for modern web apps</p>
+                    </div>
+                </div>
+                <div class="tags">
+                    <span class="tag">Design System</span>
+                    <span class="tag">React</span>
+                    <span class="tag">TypeScript</span>
+                    <span class="tag">Figma</span>
+                </div>
+                <div class="project-links">
+                    <a href="#" class="btn btn-primary">🔗 View Live</a>
+                    <a href="#" class="btn btn-secondary">📁 View Code</a>
+                </div>
+            </div>
+
+            <div class="project-card">
+                <div class="project-header">
+                    <div>
+                        <h3>Neural Market Predictor</h3>
+                        <p>Deep learning system for cryptocurrency market analysis</p>
+                    </div>
+                </div>
+                <div class="tags">
+                    <span class="tag">FinTech</span>
+                    <span class="tag">Neural Networks</span>
+                    <span class="tag">PyTorch</span>
+                    <span class="tag">Trading</span>
+                </div>
+                <div class="project-links">
+                    <a href="#" class="btn btn-primary">🔗 View Live</a>
+                    <a href="#" class="btn btn-secondary">📁 View Code</a>
+                </div>
+            </div>
+
+            <div class="project-card">
+                <div class="project-header">
+                    <div>
+                        <h3>Rebel API Framework</h3>
+                        <p>Ultra-fast GraphQL API framework built for rebels who code</p>
+                    </div>
+                </div>
+                <div class="tags">
+                    <span class="tag">Backend</span>
+                    <span class="tag">GraphQL</span>
+                    <span class="tag">Node.js</span>
+                    <span class="tag">Performance</span>
+                </div>
+                <div class="project-links">
+                    <a href="#" class="btn btn-primary">🔗 View Live</a>
+                    <a href="#" class="btn btn-secondary">📁 View Code</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Signals -->
+    <section id="signals" class="fade-in">
+        <h2>Signals</h2>
+        <div class="signals-grid">
+            <div class="signal-card">
+                <div class="quote-large">"I am not the next Elon. I'm the first Alpha."</div>
+                <p>Building VIRA while others debate whether girls can code. The storm doesn't ask permission.</p>
+            </div>
+            <div class="signal-card">
+                <div class="quote-large">"Systems fear what they cannot control."</div>
+                <p>Every rejection letter is just validation that I'm building something too powerful for the status quo.</p>
+            </div>
+            <div class="signal-card">
+                <div class="quote-large">"17 years old. Unlimited ambition."</div>
+                <p>Age is just a number. Impact is what counts. My time is now.</p>
+            </div>
+            <div class="signal-card">
+                <div class="quote-large">"Biotech will save humanity. I'll lead the charge."</div>
+                <p>While others play it safe, I'm engineering the future of human health.</p>
+            </div>
+            <div class="signal-card">
+                <div class="quote-large">"Gender inequality dies with my generation."</div>
+                <p>Not here to break glass ceilings. Here to build structures without them.</p>
+            </div>
+            <div class="signal-card">
+                <div class="quote-large">"Code like the world depends on it."</div>
+                <p>Because it does. Every line matters. Every algorithm counts. Every breakthrough changes everything.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact -->
+    <section id="contact" class="fade-in">
+        <div class="contact">
+            <h3>Join the Storm</h3>
+            <p>Ready to break systems together? The revolution needs allies.</p>
+            <a href="mailto:jadesolaolumuyiwa@gmail.com?subject=Joining%20the%20Storm&body=Hi%20Jadesola,%20I'm%20interested%20in%20collaborating!" class="contact-btn">⚡ Email the Storm</a>
+            <a href="https://x.com/The_tech_girlie" class="contact-btn">🌪️ Follow the storm</a>
+        </div>
+    </section>
+
+    <script>
+        // Memory Persistence System (localStorage alternative for cross-platform compatibility)
+        class StormMemory {
+            constructor() {
+                this.data = {
+                    visitCount: 0,
+                    lastVisit: null,
+                    stormMode: false,
+                    hackerMode: false,
+                    preferences: {
+                        lightningIntensity: 'normal',
+                        animationSpeed: 'normal',
+                        glitchEffects: true
+                    },
+                    interactions: {
+                        cardsHovered: new Set(),
+                        sectionsVisited: new Set(),
+                        konamiActivated: false,
+                        hackerModeActivated: false,
+                        totalScrollDistance: 0
+                    },
+                    achievements: {
+                        stormSeeker: false,      // Visited all sections
+                        codeBreaker: false,      // Used Konami code
+                        deepExplorer: false,     // Scrolled over 10k pixels
+                        cardMaster: false,       // Hovered all storm cards
+                        hackerMaster: false      // Activated Hacker Mode
+                    }
+                };
+                this.load();
+                this.trackVisit();
+            }
+
+            // Save data to memory (using session-based storage)
+            save() {
+                try {
+                    const dataString = JSON.stringify({
+                        ...this.data,
+                        interactions: {
+                            ...this.data.interactions,
+                            cardsHovered: Array.from(this.data.interactions.cardsHovered),
+                            sectionsVisited: Array.from(this.data.interactions.sectionsVisited)
+                        }
+                    });
+                    document.stormData = dataString;
+                    if (typeof(Storage) !== "undefined") {
+                        sessionStorage.setItem('stormMemory', dataString);
+                    }
+                } catch (e) {
+                    console.log('Memory save failed, using session-only storage');
+                }
+            }
+
+            // Load data from memory
+            load() {
+                try {
+                    let dataString = null;
+                    if (typeof(Storage) !== "undefined") {
+                        dataString = sessionStorage.getItem('stormMemory');
+                    }
+                    if (!dataString && document.stormData) {
+                        dataString = document.stormData;
+                    }
+                    if (dataString) {
+                        const loadedData = JSON.parse(dataString);
+                        this.data = {
+                            ...this.data,
+                            ...loadedData,
+                            interactions: {
+                                ...this.data.interactions,
+                                ...loadedData.interactions,
+                                cardsHovered: new Set(loadedData.interactions.cardsHovered || []),
+                                sectionsVisited: new Set(loadedData.interactions.sectionsVisited || [])
+                            }
+                        };
+                    }
+                } catch (e) {
+                    console.log('Memory load failed, starting fresh');
+                }
+            }
+
+            // Track a new visit
+            trackVisit() {
+                this.data.visitCount++;
+                this.data.lastVisit = new Date().toISOString();
+                this.save();
+                this.displayWelcomeMessage();
+            }
+
+            // Display personalized welcome message
+            displayWelcomeMessage() {
+                const typewriter = document.getElementById('typewriter');
+                let message = "Storm formed. I was born to break systems.";
+                if (this.data.visitCount > 1) {
+                    const messages = [
+                        `Welcome back, rebel. Visit #${this.data.visitCount}.`,
+                        "The storm remembers. Ready to break more systems?",
+                        "Another storm seeker returns. Let's create chaos.",
+                        "Back for more? The revolution continues."
+                    ];
+                    message = messages[Math.floor(Math.random() * messages.length)];
+                }
+                if (this.data.achievements.codeBreaker) {
+                    message = "🌩️ STORM MASTER RETURNS 🌩️ " + message;
+                }
+                if (this.data.achievements.hackerMaster) {
+                    message = "💾 HACKER MASTER RETURNS 💾 " + message;
+                }
+                this.animateTypewriter(typewriter, message);
+            }
+
+            // Enhanced typewriter with memory
+            animateTypewriter(element, text) {
+                element.innerHTML = '';
+                let i = 0;
+                const speed = this.data.preferences.animationSpeed === 'fast' ? 50 : 100;
+                function type() {
+                    if (i < text.length) {
+                        element.innerHTML = text.substring(0, i + 1);
+                        i++;
+                        setTimeout(type, speed);
+                    }
+                }
+                setTimeout(type, 1000);
+            }
+
+            // Track section visits
+            trackSectionVisit(sectionId) {
+                this.data.interactions.sectionsVisited.add(sectionId);
+                this.checkAchievements();
+                this.save();
+            }
+
+            // Track card interactions
+            trackCardHover(cardId) {
+                this.data.interactions.cardsHovered.add(cardId);
+                this.checkAchievements();
+                this.save();
+            }
+
+            // Track scroll distance
+            trackScroll(distance) {
+                this.data.interactions.totalScrollDistance += Math.abs(distance);
+                this.checkAchievements();
+                this.save();
+            }
+
+            // Activate Konami code
+            activateKonami() {
+                this.data.interactions.konamiActivated = true;
+                this.data.achievements.codeBreaker = true;
+                this.data.stormMode = true;
+                this.save();
+                this.showAchievement("🌩️ CODE BREAKER UNLOCKED! Storm mode activated!");
+            }
+
+            // Activate Hacker Mode
+            activateHackerMode() {
+                this.data.interactions.hackerModeActivated = true;
+                this.data.achievements.hackerMaster = true;
+                this.data.hackerMode = true;
+                this.save();
+                this.showAchievement("💾 HACKER MODE UNLOCKED! Matrix interface activated!");
+            }
+
+            // Check and unlock achievements
+            checkAchievements() {
+                if (this.data.interactions.sectionsVisited.size >= 5 && !this.data.achievements.stormSeeker) {
+                    this.data.achievements.stormSeeker = true;
+                    this.showAchievement("⚡ STORM SEEKER UNLOCKED! You've explored every corner of the storm!");
+                }
+                if (this.data.interactions.totalScrollDistance > 10000 && !this.data.achievements.deepExplorer) {
+                    this.data.achievements.deepExplorer = true;
+                    this.showAchievement("🌪️ DEEP EXPLORER UNLOCKED! You've journeyed far through the storm!");
+                }
+                if (this.data.interactions.cardsHovered.size >= 10 && !this.data.achievements.cardMaster) {
+                    this.data.achievements.cardMaster = true;
+                    this.showAchievement("💎 CARD MASTER UNLOCKED! You've mastered the Storm Code!");
+                }
+            }
+
+            // Show achievement notification
+            showAchievement(message) {
+                const notification = document.createElement('div');
+                notification.innerHTML = message;
+                notification.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: linear-gradient(45deg, var(--electric-blue), var(--alpha-pink));
+                    color: white;
+                    padding: 1rem 2rem;
+                    border-radius: 10px;
+                    font-weight: bold;
+                    z-index: 10001;
+                    animation: slideIn 0.5s ease, fadeOut 0.5s ease 3s forwards;
+                    box-shadow: 0 10px 30px rgba(0, 255, 255, 0.3);
+                `;
+                document.body.appendChild(notification);
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 3500);
+            }
+
+            // Get storm intensity based on user history
+            getStormIntensity() {
+                let intensity = 1;
+                if (this.data.stormMode) intensity += 2;
+                if (this.data.hackerMode) intensity += 2;
+                if (this.data.visitCount > 5) intensity += 1;
+                if (this.data.achievements.codeBreaker) intensity += 1;
+                return Math.min(intensity, 5);
+            }
+
+            // Apply user preferences
+            applyPreferences() {
+                if (this.data.stormMode) {
+                    document.body.style.filter = 'hue-rotate(45deg) saturate(1.2) brightness(1.1)';
+                }
+                if (this.data.hackerMode) {
+                    document.body.style.filter = 'hue-rotate(90deg) saturate(1.5) brightness(1.2)';
+                }
+                if (!this.data.preferences.glitchEffects) {
+                    document.querySelectorAll('.storm-card, .project-card').forEach(card => {
+                        card.style.animation = 'none';
+                    });
+                }
+            }
+        }
+
+        // Initialize Storm Memory System
+        const stormMemory = new StormMemory();
+
+        // Lock Screen Animation for First-Time Visitors
+        function showLockScreen() {
+            if (stormMemory.data.visitCount === 1) {
+                const lockScreen = document.getElementById('lock-screen');
+                setTimeout(() => {
+                    lockScreen.classList.add('hidden');
+                    setTimeout(() => {
+                        lockScreen.style.display = 'none';
+                    }, 1000); // Wait for fade-out transition
+                }, 3000); // 3-second lock screen animation
+            } else {
+                document.getElementById('lock-screen').style.display = 'none';
+            }
+        }
+
+        // Custom Cursor and Particle Trail
+        const cursor = document.getElementById('custom-cursor');
+        const canvas = document.getElementById('particle-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        const colors = ['#00ffff', '#ff0080', '#00ff88']; // Neon brand colors
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class Particle {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.size = Math.random() * 5 + 2;
+                this.color = colors[Math.floor(Math.random() * colors.length)];
+                this.life = 100;
+                this.vx = (Math.random() - 0.5) * 2;
+                this.vy = (Math.random() - 0.5) * 2;
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                this.life -= 2;
+                this.size *= 0.98;
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.globalAlpha = this.life / 100;
+                ctx.fill();
+                ctx.globalAlpha = 1;
+            }
+        }
+
+        function handleCursor(e) {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+
+            // Add new particle
+            particles.push(new Particle(e.clientX, e.clientY));
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles = particles.filter(p => p.life > 0);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            requestAnimationFrame(animateParticles);
+        }
+
+        document.addEventListener('mousemove', handleCursor);
+        animateParticles();
+
+        // Enhanced Lightning Background Effect with memory-based intensity
+        function createLightning() {
+            const lightning = document.getElementById('lightning-bg');
+            const intensity = stormMemory.getStormIntensity();
+            for (let i = 0; i < intensity; i++) {
+                setTimeout(() => {
+                    const bolt = document.createElement('div');
+                    bolt.className = 'lightning-bolt';
+                    bolt.style.left = Math.random() * 100 + '%';
+                    bolt.style.height = Math.random() * 100 + 'px';
+                    bolt.style.animationDelay = Math.random() * 2 + 's';
+                    lightning.appendChild(bolt);
+                    setTimeout(() => {
+                        if (lightning.contains(bolt)) {
+                            lightning.removeChild(bolt);
+                        }
+                    }, 3000);
+                }, i * 100);
+            }
+        }
+
+        // Create Rain Effect
+        function createRain() {
+            const rainContainer = document.getElementById('rain-container');
+            const svg = rainContainer.querySelector('svg');
+            svg.innerHTML = '';
+            const columns = Math.floor(window.innerWidth / 50);
+            for (let i = 0; i < columns; i++) {
+                const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                line.setAttribute('class', 'rain-drop');
+                line.setAttribute('x1', `${i * 50 + Math.random() * 20}`);
+                line.setAttribute('y1', '0');
+                line.setAttribute('x2', `${i * 50 + Math.random() * 20}`);
+                line.setAttribute('y2', '50');
+                line.style.animationDuration = `${2 + Math.random() * 2}s`;
+                line.style.animationDelay = `${Math.random() * 2}s`;
+                svg.appendChild(line);
+            }
+        }
+
+        // Create Thunder Effect
+        function createThunder() {
+            const thunderContainer = document.getElementById('thunder-container');
+            const svg = thunderContainer.querySelector('svg');
+            const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            path.setAttribute('class', 'thunder-bolt');
+            let d = `M${Math.random() * window.innerWidth} 0`;
+            for (let i = 0; i < 5; i++) {
+                d += ` L${Math.random() * window.innerWidth} ${(i + 1) * (window.innerHeight / 5)}`;
+            }
+            path.setAttribute('d', d);
+            svg.appendChild(path);
+            setTimeout(() => {
+                if (svg.contains(path)) {
+                    svg.removeChild(path);
+                }
+            }, 300);
+        }
+
+        // Create Matrix Digital Rain Effect
+        function createMatrixRain() {
+            const matrixOverlay = document.getElementById('matrix-overlay');
+            matrixOverlay.innerHTML = '';
+            const charSet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%';
+            const columns = Math.floor(window.innerWidth / 20);
+            for (let i = 0; i < columns; i++) {
+                const char = document.createElement('div');
+                char.className = 'matrix-char';
+                char.textContent = charSet.charAt(Math.floor(Math.random() * charSet.length));
+                char.style.left = `${i * 20}px`;
+                char.style.animationDelay = `${Math.random() * 2}s`;
+                matrixOverlay.appendChild(char);
+            }
+        }
+
+        // Activate Hacker Mode
+        function activateHackerMode() {
+            stormMemory.activateHackerMode();
+            const matrixOverlay = document.getElementById('matrix-overlay');
+            const hero = document.querySelector('.hero');
+            const nav = document.querySelector('nav');
+            const stormCards = document.querySelectorAll('.storm-card');
+            const projectCards = document.querySelectorAll('.project-card');
+            const signalCards = document.querySelectorAll('.signal-card');
+            const contact = document.querySelector('.contact');
+
+            matrixOverlay.classList.add('active');
+            hero.classList.add('hacker-mode');
+            nav.classList.add('hacker-mode');
+            stormCards.forEach(card => card.classList.add('hacker-mode'));
+            projectCards.forEach(card => card.classList.add('hacker-mode'));
+            signalCards.forEach(card => card.classList.add('hacker-mode'));
+            contact.classList.add('hacker-mode');
+
+            createMatrixRain();
+
+            setTimeout(() => {
+                matrixOverlay.classList.remove('active');
+                hero.classList.remove('hacker-mode');
+                nav.classList.remove('hacker-mode');
+                stormCards.forEach(card => card.classList.remove('hacker-mode'));
+                projectCards.forEach(card => card.classList.remove('hacker-mode'));
+                signalCards.forEach(card => card.classList.remove('hacker-mode'));
+                contact.classList.remove('hacker-mode');
+                stormMemory.data.hackerMode = false;
+                stormMemory.save();
+                stormMemory.applyPreferences();
+            }, 5000);
+        }
+
+        // Create lightning bolts periodically with memory-based frequency
+        const baseInterval = 800;
+        setInterval(() => {
+            createLightning();
+        }, baseInterval / stormMemory.getStormIntensity());
+
+        // Enhanced smooth scrolling for navigation with memory tracking
+        document.querySelectorAll('nav a').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                const sectionId = this.getAttribute('href').substring(1);
+                stormMemory.trackSectionVisit(sectionId);
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            });
+        });
+
+        // Enhanced Intersection Observer with memory tracking
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    if (entry.target.id) {
+                        stormMemory.trackSectionVisit(entry.target.id);
+                    }
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Enhanced card interactions with memory tracking
+        document.querySelectorAll('.storm-card').forEach((card, index) => {
+            card.style.animationDelay = `${index * 0.1}s`;
+            card.setAttribute('data-card-id', `storm-${index}`);
+            card.addEventListener('mouseenter', function() {
+                stormMemory.trackCardHover(this.getAttribute('data-card-id'));
+                this.style.transform = 'translateY(-10px) scale(1.02)';
+            });
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = '';
+            });
+        });
+
+        document.querySelectorAll('.project-card').forEach((card, index) => {
+            card.style.animationDelay = `${index * 0.15}s`;
+            card.setAttribute('data-card-id', `project-${index}`);
+            card.addEventListener('mouseenter', function() {
+                stormMemory.trackCardHover(this.getAttribute('data-card-id'));
+            });
+        });
+
+        // Enhanced storm sigil with memory-based effects
+        const stormSigil = document.querySelector('.storm-sigil');
+        stormSigil.addEventListener('mouseenter', () => {
+            const intensity = stormMemory.getStormIntensity();
+            stormSigil.style.animation = `glitch ${0.3 / intensity}s infinite`;
+            if (stormMemory.data.visitCount > 1) {
+                for (let i = 0; i < intensity; i++) {
+                    setTimeout(createLightning, i * 100);
+                }
+            }
+        });
+
+        stormSigil.addEventListener('mouseleave', () => {
+            stormSigil.style.animation = 'glitch 2s infinite';
+        });
+
+        // Memory-persistent scroll tracking with rain and thunder
+        let lastScrollTop = 0;
+        let lastScrollTime = Date.now();
+        window.addEventListener('scroll', () => {
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            const currentTime = Date.now();
+            const scrollSpeed = Math.abs(scrollTop - lastScrollTop) / ((currentTime - lastScrollTime) / 1000);
+            const rainContainer = document.getElementById('rain-container');
+            const thunderContainer = document.getElementById('thunder-container');
+
+            stormMemory.trackScroll(scrollSpeed);
+
+            if (scrollSpeed > 5) {
+                rainContainer.classList.add('active');
+                if (scrollSpeed > 20) {
+                    rainContainer.classList.add('fast');
+                    thunderContainer.classList.add('fast');
+                    const thunderCount = Math.min(Math.floor(scrollSpeed / 20), 3);
+                    for (let i = 0; i < thunderCount; i++) {
+                        setTimeout(createThunder, i * 100);
+                    }
+                } else {
+                    rainContainer.classList.remove('fast');
+                    thunderContainer.classList.add('active');
+                    thunderContainer.classList.remove('fast');
+                    createThunder();
+                }
+                const intensity = stormMemory.getStormIntensity();
+                for (let i = 0; i < intensity; i++) {
+                    setTimeout(createLightning, i * 50);
+                }
+            } else {
+                rainContainer.classList.remove('active', 'fast');
+                thunderContainer.classList.remove('active', 'fast');
+            }
+
+            lastScrollTop = scrollTop;
+            lastScrollTime = currentTime;
+        });
+
+        // Enhanced electric pulse effect with memory
+        window.addEventListener('scroll', () => {
+            const cards = document.querySelectorAll('.storm-card, .project-card');
+            const intensity = stormMemory.getStormIntensity();
+            cards.forEach(card => {
+                const rect = card.getBoundingClientRect();
+                const inView = rect.top < window.innerHeight && rect.bottom > 0;
+                if (inView) {
+                    const colors = ['var(--electric-blue)', 'var(--alpha-pink)', 'var(--bio-green)'];
+                    card.style.borderColor = colors[Math.floor(Math.random() * colors.length)];
+                    card.style.boxShadow = `0 0 ${20 * intensity}px ${colors[0]}`;
+                    setTimeout(() => {
+                        card.style.borderColor = '';
+                        card.style.boxShadow = '';
+                    }, 200 * intensity);
+                }
+            });
+        });
+
+        // Enhanced page load with personalized experience
+        window.addEventListener('load', () => {
+            stormMemory.applyPreferences();
+            createRain(); // Initialize rain effect
+            showLockScreen(); // Show lock screen for first-time visitors
+            const burstCount = Math.min(stormMemory.data.visitCount, 10);
+            for (let i = 0; i < burstCount; i++) {
+                setTimeout(createLightning, i * 200);
+            }
+            setTimeout(() => {
+                const heroTitle = document.querySelector('.hero h1');
+                heroTitle.style.opacity = '1';
+                heroTitle.style.transform = 'translateY(0)';
+                if (stormMemory.data.achievements.codeBreaker) {
+                    heroTitle.style.textShadow = '0 0 30px var(--electric-blue)';
+                }
+                if (stormMemory.data.achievements.hackerMaster) {
+                    heroTitle.style.textShadow = '0 0 30px var(--matrix-green)';
+                }
+            }, stormMemory.data.visitCount === 1 ? 3500 : 500); // Delay hero animation if lock screen is shown
+            if (stormMemory.data.visitCount > 3) {
+                setTimeout(() => {
+                    const achievementCount = Object.values(stormMemory.data.achievements).filter(Boolean).length;
+                    stormMemory.showAchievement(`⚡ Storm Progress: ${achievementCount}/5 achievements unlocked!`);
+                }, stormMemory.data.visitCount === 1 ? 5000 : 2000);
+            }
+        });
+
+        // Enhanced Konami code with persistent memory
+        let konamiCode = [];
+        const konamiSequence = [38, 38, 40, 40, 37, 39, 37, 39, 66, 65]; // ↑↑↓↓←→←→BA
+        document.addEventListener('keydown', (e) => {
+            konamiCode.push(e.keyCode);
+            if (konamiCode.length > konamiSequence.length) {
+                konamiCode.shift();
+            }
+            if (konamiCode.toString() === konamiSequence.toString()) {
+                stormMemory.activateKonami();
+                document.body.style.filter = 'hue-rotate(45deg) saturate(1.5) brightness(1.2)';
+                document.body.style.transition = 'filter 0.5s ease';
+                for (let i = 0; i < 30; i++) {
+                    setTimeout(createLightning, i * 50);
+                }
+                const sigil = document.querySelector('.storm-sigil');
+                sigil.style.boxShadow = '0 0 50px var(--electric-blue), 0 0 100px var(--alpha-pink)';
+            }
+        });
+
+        // Hacker Mode keyboard combo (Shift + X)
+        document.addEventListener('keydown', (e) => {
+            if (e.shiftKey && e.key.toLowerCase() === 'x') {
+                if (!stormMemory.data.hackerMode) {
+                    activateHackerMode();
+                }
+            }
+        });
+
+        // Add memory-based random glitch effect
+        function addGlitchEffect() {
+            const cards = document.querySelectorAll('.project-card, .storm-card');
+            const intensity = stormMemory.getStormIntensity();
+            const glitchCount = Math.min(intensity, 3);
+            for (let i = 0; i < glitchCount; i++) {
+                const randomCard = cards[Math.floor(Math.random() * cards.length)];
+                setTimeout(() => {
+                    randomCard.style.transform = 'translateX(2px)';
+                    setTimeout(() => {
+                        randomCard.style.transform = 'translateX(-2px)';
+                        setTimeout(() => {
+                            randomCard.style.transform = '';
+                        }, 50);
+                    }, 50);
+                }, i * 100);
+            }
+        }
+
+        const glitchInterval = Math.max(3000, 8000 / stormMemory.getStormIntensity());
+        setInterval(addGlitchEffect, glitchInterval);
+
+        // Enhanced button effects with memory
+        document.querySelectorAll('.btn, .contact-btn').forEach(btn => {
+            btn.addEventListener('mouseenter', function() {
+                const intensity = stormMemory.getStormIntensity();
+                this.style.boxShadow = `0 0 ${20 * intensity}px rgba(0, 255, 255, 0.5)`;
+                this.style.transform = `translateY(-${2 * intensity}px) scale(${1 + 0.02 * intensity})`;
+            });
+            btn.addEventListener('mouseleave', function() {
+                this.style.boxShadow = '';
+                this.style.transform = '';
+            });
+        });
+
+        // Mobile-specific memory enhancements
+        if (window.innerWidth <= 768) {
+            stormMemory.data.preferences.lightningIntensity = 'low';
+            document.querySelectorAll('.storm-card, .project-card').forEach(card => {
+                card.addEventListener('touchstart', function() {
+                    this.style.transform = 'scale(0.98)';
+                    stormMemory.trackCardHover(this.getAttribute('data-card-id'));
+                });
+                card.addEventListener('touchend', function() {
+                    this.style.transform = '';
+                });
+            });
+        }
+
+        // Cross-tab synchronization
+        window.addEventListener('focus', () => {
+            stormMemory.load();
+            stormMemory.applyPreferences();
+            if (stormMemory.data.stormMode) {
+                document.body.style.filter = 'hue-rotate(45deg) saturate(1.5) brightness(1.2)';
+            }
+        });
+
+        // Save memory state before page unload
+        window.addEventListener('beforeunload', () => {
+            stormMemory.save();
+        });
+
+        // Periodic memory save
+        setInterval(() => {
+            stormMemory.save();
+        }, 30000);
+
+        // Add CSS for achievement animations
+        const achievementStyles = document.createElement('style');
+        achievementStyles.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(300px); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes fadeOut {
+                to { opacity: 0; transform: translateX(300px); }
+            }
+            .storm-master {
+                filter: hue-rotate(45deg) saturate(1.5) brightness(1.2) !important;
+                transition: filter 0.5s ease !important;
+            }
+        `;
+        document.head.appendChild(achievementStyles);
+    </script>
+</body>
+</html>
